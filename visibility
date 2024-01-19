@@ -1,0 +1,41 @@
+import MaxPlus
+from PySide.QtGui import *
+
+class VisibilityToggleWindow(QDialog):
+    def __init__(self):
+        super(VisibilityToggleWindow, self).__init__(MaxPlus.GetQMaxMainWindow())
+
+        self.setWindowTitle("Visibility Toggle")
+        self.setGeometry(100, 100, 200, 100)
+
+        self.create_widgets()
+
+    def create_widgets(self):
+        layout = QVBoxLayout()
+
+        self.toggle_button = QPushButton("Toggle Visibility")
+        self.toggle_button.clicked.connect(self.toggle_visibility)
+
+        layout.addWidget(self.toggle_button)
+        self.setLayout(layout)
+
+    def toggle_visibility(self):
+        selection = MaxPlus.SelectionManager.GetNodes()
+        if len(selection) == 1 and selection[0].IsGroupOwner():
+            group_node = selection[0]
+            visibility_state = not group_node.GetVisibility()
+            group_node.SetVisibility(visibility_state)
+            print(f"Visibility set to {visibility_state}")
+
+def main():
+    global visibility_toggle_window
+    try:
+        visibility_toggle_window.close()
+    except:
+        pass
+
+    visibility_toggle_window = VisibilityToggleWindow()
+    visibility_toggle_window.show()
+
+if __name__ == "__main__":
+    main()
